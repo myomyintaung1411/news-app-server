@@ -1,9 +1,10 @@
 package common
 
 import (
-	"github.com/dgrijalva/jwt-go"
-	"time"
 	"huana/model"
+	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 var jwtkey = []byte("a_secret_create")
@@ -16,7 +17,7 @@ type Claims struct {
 func ReleaseToken(user model.User) (string, error) {
 	expireTime := time.Now().Add(7 * 24 * time.Hour)
 	claims := &Claims{
-		UserId: user.ID,
+		UserId: user.Userid,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(), //过期时间
 			IssuedAt:  time.Now().Unix(),

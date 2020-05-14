@@ -1,11 +1,12 @@
 package middleware
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
-	"strings"
 	"huana/common"
 	"huana/model"
+	"net/http"
+	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -34,7 +35,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		DB.First(&user, userId)
 
 		//用户不存在
-		if user.ID == 0 {
+		if user.Userid == 0 {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": "权限不足"})
 			ctx.Abort()
 			return

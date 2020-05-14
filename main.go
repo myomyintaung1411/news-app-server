@@ -1,13 +1,14 @@
 package main
 
 import (
+	"huana/common"
 	"huana/route"
+	"net/http"
+	"os"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
-	"os"
-	"huana/common"
-	"net/http"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 	defer db.Close()
 
 	r := gin.Default()
-	
+
 	r = route.CollectRoute(r)
 	r.Static("/images", "./images")
 	r.StaticFS("/public", http.Dir("public"))
@@ -25,8 +26,9 @@ func main() {
 	if port != "" {
 		panic(r.Run(":" + port))
 	}
-	panic(r.Run()) 
+	panic(r.Run())
 }
+
 func InitConfig() {
 	workDir, _ := os.Getwd()
 	viper.SetConfigName("application")
@@ -39,7 +41,7 @@ func InitConfig() {
 }
 
 // func upload(c *gin.Context) {
-// 	file, header, err := c.Request.FormFile("file") 
+// 	file, header, err := c.Request.FormFile("file")
 // 	if err != nil {
 // 	  c.String(http.StatusBadRequest, fmt.Sprintf("file err : %s", err.Error()))
 // 	  return
@@ -57,6 +59,3 @@ func InitConfig() {
 // 	filepath := "http://localhost:3000/public/" + filename
 // 	c.JSON(http.StatusOK, gin.H{"filepath": filepath})
 //   }
-
-
-
