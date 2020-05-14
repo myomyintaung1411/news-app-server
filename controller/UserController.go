@@ -11,6 +11,7 @@ import (
 	"huana/model"
 	"huana/response"
 	"huana/util"
+	
 )
 
 func Register(ctx *gin.Context) {
@@ -19,8 +20,8 @@ func Register(ctx *gin.Context) {
 	//json.NewDecoder(ctx.Request.Body).Decode(&requestUser)
 	ctx.Bind(&requestUser)
 	//获取参数
-	name := requestUser.Name
-	telephone := requestUser.Telephone
+	name := requestUser.Username
+	telephone := requestUser.Phone
 	password := requestUser.Password
 	//数据验证
 	if len(telephone) != 11 {
@@ -45,8 +46,8 @@ func Register(ctx *gin.Context) {
 		return
 	}
 	newUser := model.User{
-		Name:      name,
-		Telephone: telephone,
+		Username:      name,
+		Phone: telephone,
 		Password:  string(hasePassowrd),
 	}
 	DB.Create(&newUser)
@@ -65,7 +66,7 @@ func Register(ctx *gin.Context) {
 func Login(c *gin.Context) {
 	db := common.GetDB()
 	//获取参数
-	telephone := c.PostForm("Telephone")
+	telephone := c.PostForm("Phone")
 	password := c.PostForm("Password")
 	//数据验证
 	if len(telephone) != 11 {
@@ -78,8 +79,8 @@ func Login(c *gin.Context) {
 	}
 	//判断手机号是否存在
 	var user model.User
-	db.Where("telephone=?", telephone).First(&user)
-	if user.ID == 0 {
+	db.Where("phone=?", telephone).First(&user)
+	if user.Userid == 0 {
 		response.Response(c, http.StatusUnprocessableEntity, 422, nil, "密码不能少于6位")
 		return
 	}
@@ -88,6 +89,7 @@ func Login(c *gin.Context) {
 		err != nil {
 		response.Response(c, http.StatusBadRequest, 400, nil, "密码错误")
 		//c.JSON(http.StatusBadRequest, gin.H{"code": 400, "msg": "密码错误"})
+	
 		return
 	}
 
@@ -111,8 +113,8 @@ func Info(ctx *gin.Context) {
 
 func isTelephoneExist(db *gorm.DB, telephone string) bool {
 	var user model.User
-	db.Where("telephone=?", telephone).First(&user)
-	if user.ID != 0 {
+	db.Where("phone=?", telephone).First(&user)
+	if user.Userid != 0 {
 		return true
 	}
 	return false

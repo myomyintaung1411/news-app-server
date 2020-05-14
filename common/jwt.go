@@ -2,7 +2,7 @@ package common
 
 import (
 	"github.com/dgrijalva/jwt-go"
-	"time"
+	// "time"
 	"huana/model"
 )
 
@@ -14,13 +14,13 @@ type Claims struct {
 }
 
 func ReleaseToken(user model.User) (string, error) {
-	expireTime := time.Now().Add(7 * 24 * time.Hour)
+	// expireTime := time.Now().Add(1 * 60 * time.Second)
 	claims := &Claims{
-		UserId: user.ID,
+		UserId: user.Userid,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expireTime.Unix(), //过期时间
-			IssuedAt:  time.Now().Unix(),
-			Issuer:    "xietong.me",
+			// ExpiresAt: expireTime.Unix(), //过期时间
+			// IssuedAt:  time.Now().Unix(),
+			Issuer:    "huanaguoji.newsapp",
 			Subject:   "user token",
 		},
 	}
