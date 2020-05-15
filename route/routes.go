@@ -1,32 +1,30 @@
 package route
 
 import (
-"github.com/gin-gonic/gin"
-"huana/controller"
-// "net/http"
-"huana/middleware"
+	"huana/controller"
 
+	"github.com/gin-gonic/gin"
+
+	// "net/http"
+	"huana/middleware"
 )
 
 func CollectRoute(r *gin.Engine) *gin.Engine {
 	r.Use(middleware.CORSMiddleware())
 	r.POST("/api/auth/register", controller.Register)
 	r.POST("/api/auth/login", controller.Login)
-	r.GET("api/auth/info", middleware.AuthMiddleware(), controller.Info)
-		r.POST("/api/auth/upload", controller.Upload)
-		r.POST("/api/auth/multipleupload", controller.MultipleUpload)
+	r.GET("/api/auth/info", middleware.AuthMiddleware(), controller.Info)
+	r.POST("/api/auth/upload", controller.Upload)
+	r.POST("/api/auth/multipleupload", controller.MultipleUpload)
+	r.POST("/api/userpost", controller.NewPost)
+	r.GET("/api/userpost/info", middleware.AuthUserPost(), controller.UserpostInfo)
+	r.POST("/api/momentpost", controller.NewMomentPost)
 
-	
-
-	
 	return r
 }
 
-
-
 // func CollectRoute() *gin.Engine {
 // 	r := gin.Default()
-	
 
 // 	v1 := r.Group("/api/auth")
 // 	{

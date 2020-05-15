@@ -6,7 +6,9 @@ import (
 	"huana/dto"
 	"huana/model"
 	"huana/response"
-	"huana/util"
+	"time"
+
+	//"huana/util"
 	"log"
 	"net/http"
 
@@ -26,19 +28,21 @@ func Register(ctx *gin.Context) {
 	password := requestUser.Password
 	//数据验证
 	if len(telephone) != 11 {
-		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "手机号必须为11位")
+		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "Wrong phone number , it need to fill 11 length")
 		return
 	}
-	if len(password) < 6 {
-		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "密码不能少于6位")
+	if len(password) < 6 || len(password) > 8 {
+		response.Response(ctx, http.StatusUnprocessableEntity, 400, nil, "Password field need min 6 - max 8 length")
 		return
 	}
 	//如果名称为空给一个随机字符串
 	if len(name) == 0 {
-		name = util.RandomString(10)
+		//name = util.RandomString(10)
+		response.Response(ctx, http.StatusUnprocessableEntity, 405, nil, "Username required")
+		return
 	}
 	if isTelephoneExist(DB, telephone) {
-		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "用户已存在")
+		response.Response(ctx, http.StatusUnprocessableEntity, 410, nil, "User already exist with this phone number")
 		return
 	}
 	hasePassowrd, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -47,9 +51,10 @@ func Register(ctx *gin.Context) {
 		return
 	}
 	newUser := model.User{
-		Username: name,
-		Phone:    telephone,
-		Password: string(hasePassowrd),
+		Username:   name,
+		Phone:      telephone,
+		Password:   string(hasePassowrd),
+		Createdate: time.Now(),
 	}
 	DB.Save(&newUser)
 	//发送token
@@ -61,7 +66,7 @@ func Register(ctx *gin.Context) {
 	}
 
 	//返回结果
-	response.Success(ctx, gin.H{"token": token}, "注册成功")
+	response.Success(ctx, gin.H{"token": token}, "Success")
 }
 
 func Login(c *gin.Context) {
@@ -72,11 +77,11 @@ func Login(c *gin.Context) {
 	fmt.Print(len(password))
 	//数据验证
 	if len(telephone) != 11 {
-		response.Response(c, http.StatusUnprocessableEntity, 422, nil, "手机号必须为11位")
+		response.Response(c, http.StatusUnprocessableEntity, 420, nil, "Wrong phone number , it need to fill 11 length")
 		return
 	}
-	if len(password) < 6 {
-		response.Response(c, http.StatusUnprocessableEntity, 422, nil, "密码不能少于6位")
+	if len(password) < 6 || len(password) > 8 {
+		response.Response(c, http.StatusUnprocessableEntity, 410, nil, "Password field need min 6 - max 8 length")
 		return
 	}
 	//判断手机号是否存在
@@ -84,7 +89,7 @@ func Login(c *gin.Context) {
 	db.Where("phone=?", telephone).Find(&user)
 	fmt.Println(user.Userid)
 	if user.Userid == 0 {
-		response.Response(c, http.StatusUnprocessableEntity, 422, nil, "wrong user data")
+		response.Response(c, http.StatusUnprocessableEntity, 422, nil, "User with this phone number doesn't exist")
 		return
 	}
 	//判断密码是否正确
@@ -113,6 +118,7 @@ func Info(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"code": 200, "data": gin.H{"user": dto.ToUserDto(user.(model.User))}})
 }
+
 
 func isTelephoneExist(db *gorm.DB, telephone string) bool {
 	var user model.User
