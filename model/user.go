@@ -7,7 +7,7 @@ import (
 
 //User table
 type User struct {
-	Userid       uint `gorm:"primary_key"`
+	Userid       int `gorm:"primary_key"`
 	Username     string
 	Phone        string
 	Password     string
@@ -31,7 +31,7 @@ type Category struct {
 
 //user post table
 type Userpost struct {
-	Userpostid uint `gorm:"primary_key"`
+	Userpostid int `gorm:"primary_key"`
 	Userid     int
 	Createdate time.Time
 }

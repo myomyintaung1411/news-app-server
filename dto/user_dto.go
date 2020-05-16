@@ -6,14 +6,14 @@ import (
 )
 
 type UserDto struct {
-	ID       uint   `json:"id"`
+	ID       int    `json:"id"`
 	Name     string `json:"name"`
 	Password string `json:"password"`
 	Phone    string `json:"phone"`
 }
 
 type UserpostDto struct {
-	Userpostid uint   `json:"id"`
+	Userpostid int    `json:"id"`
 	Userid     int    `json:"user_id"`
 	Createdate string `json:"create_date"`
 }

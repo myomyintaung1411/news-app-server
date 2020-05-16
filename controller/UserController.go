@@ -119,7 +119,6 @@ func Info(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"code": 200, "data": gin.H{"user": dto.ToUserDto(user.(model.User))}})
 }
 
-
 func isTelephoneExist(db *gorm.DB, telephone string) bool {
 	var user model.User
 	db.Where("phone = ? ", telephone).First(&user)

@@ -10,12 +10,12 @@ import (
 var jwtkey = []byte("a_secret_create")
 
 type Claims struct {
-	UserId uint
+	UserId int
 	jwt.StandardClaims
 }
 
 type UserpostClaims struct {
-	Userpostid uint
+	Userpostid int
 	jwt.StandardClaims
 }
 

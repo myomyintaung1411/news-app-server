@@ -14,12 +14,17 @@ import (
 
 //insert new row as user post
 func NewPost(ctx *gin.Context) {
+
+	user, _ := ctx.Get("user")
+	id := user.(model.User).Userid
+
+
 	DB := common.GetDB()
 	var requestUser = model.Userpost{}
 	//json.NewDecoder(ctx.Request.Body).Decode(&requestUser)
 	ctx.Bind(&requestUser)
 	//获取参数
-	id := requestUser.Userid
+	//id := requestUser.Userid
 
 	newUserpost := model.Userpost{
 		Userid:     id,
@@ -53,17 +58,20 @@ func NewMomentPost(ctx *gin.Context) {
 	userid := post.Userid
 	userpostid := post.Userpostid
 	caption := post.Caption
+	link := post.Image
 	like := post.Likecount
-	date := post.Createdate
+	//date := post.Createdate
 
 	newMomentpost := model.Momentpost{
 		Userid:     userid,
 		Userpostid: userpostid,
 		Caption:    caption,
+		Image:      link,
 		Likecount:  like,
-		Createdate: date,
+		Createdate: time.Now(),
 	}
 	DB.Save(&newMomentpost)
+	ctx.JSON(http.StatusOK, gin.H{"code": 200, "data": gin.H{"moment_post": &newMomentpost}})
 	//json.NewEncoder(w).Encode(&newMomentpost)
 	//发送token
 	// token, err := common.ReleaseUserPostToken(newMo)
