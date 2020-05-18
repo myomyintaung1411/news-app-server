@@ -17,8 +17,12 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	r.POST("/api/auth/upload", controller.Upload)
 	r.POST("/api/auth/multipleupload", controller.MultipleUpload)
 	r.POST("/api/userpost", middleware.AuthMiddleware(), controller.NewPost)
-	r.GET("/api/userpost/info", middleware.AuthUserPost(), controller.UserpostInfo)
-	r.POST("/api/momentpost", controller.NewMomentPost)
+	r.POST("/api/userpost/info", middleware.AuthUserPost(), controller.UserpostInfo)
+	r.POST("/api/momentpost", middleware.AuthUserPost(), controller.NewMomentPost)
+	r.POST("/api/follower", controller.GetFollower)
+	r.POST("/api/following", controller.GetFollowing)
+	r.POST("/api/user/info", controller.UserInfo)
+	r.GET("/api/category", controller.GetCategory)
 
 	return r
 }

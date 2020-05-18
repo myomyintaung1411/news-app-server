@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"huana/common"
 	"huana/dto"
 	"huana/model"
@@ -17,12 +18,12 @@ func NewPost(ctx *gin.Context) {
 
 	user, _ := ctx.Get("user")
 	id := user.(model.User).Userid
-
+	fmt.Print(id)
 
 	DB := common.GetDB()
-	var requestUser = model.Userpost{}
-	//json.NewDecoder(ctx.Request.Body).Decode(&requestUser)
-	ctx.Bind(&requestUser)
+	// var requestUser = model.Userpost{}
+	// //json.NewDecoder(ctx.Request.Body).Decode(&requestUser)
+	// ctx.Bind(&requestUser)
 	//获取参数
 	//id := requestUser.Userid
 
@@ -40,7 +41,7 @@ func NewPost(ctx *gin.Context) {
 	}
 
 	//返回结果
-	response.Success(ctx, gin.H{"token": token}, "Success")
+	response.Success(ctx, gin.H{"token": token}, "Success , user post table get new field!")
 }
 
 func UserpostInfo(ctx *gin.Context) {
@@ -50,13 +51,18 @@ func UserpostInfo(ctx *gin.Context) {
 }
 
 func NewMomentPost(ctx *gin.Context) {
+
+	userpost, _ := ctx.Get("user_post")
+	userid := userpost.(model.Userpost).Userid
+	userpostid := userpost.(model.Userpost).Userpostid
+
 	DB := common.GetDB()
 	var post = model.Momentpost{}
 	//json.NewDecoder(ctx.Request.Body).Decode(&requestUser)
 	ctx.Bind(&post)
 	//获取参数
-	userid := post.Userid
-	userpostid := post.Userpostid
+	//userid := post.Userid
+	//userpostid := post.Userpostid
 	caption := post.Caption
 	link := post.Image
 	like := post.Likecount
