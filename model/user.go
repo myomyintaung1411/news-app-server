@@ -69,6 +69,7 @@ type Videopost struct {
 	Categoryid  int
 	Userpostid  int
 	Userid      int
+	Description string
 	Viewcount   int
 	Likecount   int
 	Createdate  time.Time

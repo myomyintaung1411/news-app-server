@@ -90,3 +90,14 @@ func NewMomentPost(ctx *gin.Context) {
 	// //返回结果
 	// response.Success(ctx, gin.H{"token": token}, "Success")
 }
+
+func AllMomentPost(ctx *gin.Context) {
+	db := common.GetDB()
+	//获取参数
+	//userid := c.PostForm("Userid")
+
+	var moments []model.Momentpost
+	db.Find(&moments)
+
+	ctx.JSON(http.StatusOK, gin.H{"data": moments})
+}

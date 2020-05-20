@@ -28,8 +28,8 @@ func Upload(c *gin.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	filepath := "http://localhost:3000/public/" + filename
-	c.JSON(http.StatusOK, gin.H{"filepath": filepath})
+	//filepath := "http://localhost:3000/public/" + filename
+	c.JSON(http.StatusOK, gin.H{"filepath": filename})
 }
 
 //multiple files upload
