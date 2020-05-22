@@ -8,6 +8,7 @@ import (
 	"huana/response"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -94,10 +95,28 @@ func NewMomentPost(ctx *gin.Context) {
 func AllMomentPost(ctx *gin.Context) {
 	db := common.GetDB()
 	//获取参数
-	//userid := c.PostForm("Userid")
+	userid := ctx.PostForm("Userid")
 
 	var moments []model.Momentpost
-	db.Find(&moments)
+	db.Where("userid =?", userid).Find(&moments)
 
 	ctx.JSON(http.StatusOK, gin.H{"data": moments})
+}
+
+func UpdateMomentLike(ctx *gin.Context) {
+	db := common.GetDB()
+
+	id := ctx.PostForm("Momentpostid")
+	like := ctx.PostForm("Likecount")
+	i , err := strconv.Atoi(like)
+	if err != nil {
+		fmt.Print(err.Error)
+	}
+
+	var moment model.Momentpost
+	db.Where("momentpostid = ?", id).Find(&moment)
+
+	moment.Likecount = i
+
+	db.Save(&moment)
 }

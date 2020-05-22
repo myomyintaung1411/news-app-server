@@ -138,3 +138,16 @@ func isTelephoneExist(db *gorm.DB, telephone string) bool {
 	}
 	return false
 }
+
+func UserPost(c *gin.Context){
+	db := common.GetDB();
+
+	id := c.PostForm("Userid")
+
+	var count int
+	var posts []model.Userpost
+
+	db.Model(&posts).Where("userid = ?", id).Count(&count)
+
+	c.JSON(http.StatusOK, gin.H{"count": count})
+}
