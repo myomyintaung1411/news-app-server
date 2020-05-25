@@ -3,8 +3,8 @@ server:
 datasource:
   driverName: mysql
   host: 127.0.0.1
-  port: 3308
+  port: 3306
   database: news
   username: root
-  password: 
+  password: rootadmin
   charset: utf8

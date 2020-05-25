@@ -21,22 +21,16 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	r.POST("/api/momentpost", middleware.AuthUserPost(), controller.NewMomentPost)
 	r.POST("/api/follower", controller.GetFollower)
 	r.POST("/api/following", controller.GetFollowing)
-	r.POST("/api/user/info", controller.UserInfo)
 	r.GET("/api/category", controller.GetCategory)
+	r.POST("/upload", controller.UploadFile)
+	// 以下所有路由是自己新加上去的哟～
+	r.GET("/api/auth/user/info", middleware.AuthMiddleware(), controller.UserInfo)
+	r.POST("/api/auth/feedback", middleware.AuthUserFeedback(), controller.Feedback)
+	r.POST("/api/auth/user/update/name", middleware.AuthMiddleware(), controller.UpdateUserName)
+	r.POST("/api/auth/user/update/profileimage", middleware.AuthMiddleware(), controller.UpdateUserProfileImage)
+	r.POST("/api/auth/user/update/introduction", middleware.AuthMiddleware(), controller.UpdateUserIntroduction)
+	r.POST("/api/auth/user/update/gender", middleware.AuthMiddleware(), controller.UpdateUserGender)
+	r.POST("/api/auth/user/update/birthday", middleware.AuthMiddleware(), controller.UpdateUserBirthday)
 
 	return r
 }
-
-// func CollectRoute() *gin.Engine {
-// 	r := gin.Default()
-
-// 	v1 := r.Group("/api/auth")
-// 	{
-// v1.Use(middleware.CORSMiddleware())
-// v1.POST("register", controller.Register)
-// v1.POST("register", controller.Login)
-// v1.GET("info", middleware.AuthMiddleware(), controller.Info)
-
-// 	}
-// return r
-// }

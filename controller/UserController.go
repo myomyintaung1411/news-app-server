@@ -6,6 +6,9 @@ import (
 	"huana/dto"
 	"huana/model"
 	"huana/response"
+	"io"
+	"os"
+	"strconv"
 	"time"
 
 	//"huana/util"
@@ -56,7 +59,9 @@ func Register(ctx *gin.Context) {
 		Password:   string(hasePassowrd),
 		Createdate: time.Now(),
 	}
+	fmt.Println(newUser)
 	DB.Save(&newUser)
+
 	//发送token
 	token, err := common.ReleaseToken(newUser)
 	if err != nil {
@@ -119,17 +124,6 @@ func Info(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"code": 200, "data": gin.H{"user": dto.ToUserDto(user.(model.User))}})
 }
 
-func UserInfo(c *gin.Context) {
-	db := common.GetDB()
-	//获取参数
-	userid := c.PostForm("Userid")
-
-	var user model.User
-	db.Where("userid =?", userid).Find(&user)
-
-	c.JSON(http.StatusOK, gin.H{"data": user})
-}
-
 func isTelephoneExist(db *gorm.DB, telephone string) bool {
 	var user model.User
 	db.Where("phone = ? ", telephone).First(&user)
@@ -137,4 +131,155 @@ func isTelephoneExist(db *gorm.DB, telephone string) bool {
 		return true
 	}
 	return false
+}
+
+// 以下所有是自己新加上去的哟～
+
+func UserInfo(c *gin.Context) {
+
+	user, _ := c.Get("user")
+
+	c.JSON(http.StatusOK, gin.H{"code": 200, "data": gin.H{"info": dto.ToUserInfoDto(user.(model.User))}})
+
+}
+
+func UpdateUserName(c *gin.Context) {
+	DB := common.GetDB()
+
+	var user model.User
+
+	u, _ := c.Get("user")        // 验证之后得来的值
+	uid := u.(model.User).Userid // 通过验证得来的user得到user的id
+	uname := c.PostForm("Username")
+
+	DB.Where("Userid = ?", uid).Find(&user)
+
+	user.Username = uname
+	DB.Save(&user)
+
+	response.Success(c, gin.H{"params": dto.ToUserInfoDto(user)}, "Success")
+}
+
+func UpdateUserProfileImage(c *gin.Context) {
+	file, header, err := c.Request.FormFile("file")
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("file err : %s", err.Error()))
+		return
+	}
+	filename := header.Filename
+	out, err := os.Create("public/" + filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer out.Close()
+	_, err = io.Copy(out, file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	filepath := "http://localhost:3000/public/" + filename
+
+	DB := common.GetDB()
+
+	var user model.User
+
+	u, _ := c.Get("user")        // 验证之后得来的值
+	uid := u.(model.User).Userid // 通过验证得来的user得到user的id
+	//image := c.PostForm("Profileimage")
+
+	DB.Where("Userid = ?", uid).Find(&user)
+
+	user.Profilepic = filepath
+	DB.Save(&user)
+
+	c.JSON(http.StatusOK, gin.H{"params": dto.ToUserInfoDto(user)})
+
+}
+
+func UpdateUserIntroduction(c *gin.Context) {
+	DB := common.GetDB()
+
+	var user model.User
+
+	u, _ := c.Get("user")        // 验证之后得来的值
+	uid := u.(model.User).Userid // 通过验证得来的user得到user的id
+	intro := c.PostForm("Introduction")
+
+	DB.Where("Userid = ?", uid).Find(&user)
+
+	user.Introduction = intro
+	DB.Save(&user)
+
+	response.Success(c, gin.H{"params": dto.ToUserInfoDto(user)}, "Success")
+
+}
+
+func UpdateUserGender(c *gin.Context) {
+	DB := common.GetDB()
+
+	var user model.User
+
+	u, _ := c.Get("user")        // 验证之后得来的值
+	uid := u.(model.User).Userid // 通过验证得来的user得到user的id
+	gender := c.PostForm("Gender")
+	sex, _ := strconv.Atoi(gender)
+
+	fmt.Println("sex is : ", sex)
+
+	DB.Where("Userid = ?", uid).Find(&user)
+
+	user.Sex = sex
+	DB.Save(&user)
+
+	response.Success(c, gin.H{"params": dto.ToUserInfoDto(user)}, "Success")
+
+}
+
+func UpdateUserBirthday(c *gin.Context) {
+	DB := common.GetDB()
+
+	var user model.User
+
+	u, _ := c.Get("user")        // 验证之后得来的值
+	uid := u.(model.User).Userid // 通过验证得来的user得到user的id
+	birth := c.PostForm("Birthday")
+
+	DB.Where("Userid = ?", uid).Find(&user)
+
+	user.Birthday = birth
+	DB.Save(&user)
+
+	response.Success(c, gin.H{"params": dto.ToUserInfoDto(user)}, "Success")
+
+}
+
+func Feedback(c *gin.Context) {
+
+	DB := common.GetDB()
+	var fb = model.Feedback{}
+
+	c.Bind(&fb)
+
+	feedbackpost, _ := c.Get("user_fb")
+	userid := feedbackpost.(model.User).Userid
+
+	fbcontent := c.PostForm("fbcontent")
+	fbscreencapture := c.PostForm("fbscreencapture")
+	fbcategory := c.PostForm("fbcategory")
+	nsk := "Good Job! Girl (>v<) "
+
+	// if len(fbcontent) == 5 {
+	// 	response.Response(c, http.StatusUnprocessableEntity, 422, nil, "反馈内容需要至少五个字！")
+	// 	return
+	// }
+
+	feedback := model.Feedback{
+		Userid:          userid,
+		Fbcategory:      fbcategory,
+		Fbcontent:       fbcontent,
+		Fbscreencapture: fbscreencapture,
+	}
+	fmt.Println(feedback)
+	DB.Save(&feedback)
+	//返回结果
+	response.Success(c, gin.H{"token": nsk}, "感谢您的反馈！")
 }

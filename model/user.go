@@ -18,7 +18,7 @@ type User struct {
 	Sex          int
 	Email        string
 	Address      string
-	Birthday     time.Time
+	Birthday     string
 	Introduction string
 }
 
@@ -120,3 +120,27 @@ type Follow struct {
 	Followerid int
 	Followdate time.Time
 }
+
+// 以下所有是自己新加上去的哟～
+
+//feedback table
+type Feedback struct {
+	Fbid            uint `gorm:"primary_key"`
+	Userid          int
+	Fbcategory      string
+	Fbcontent       string
+	Fbscreencapture string
+}
+
+// func (user *User) Update() int64(
+// 	DB := common.GetDB()
+// 	rs, err := DB.Exec("Update User SET NAME=? WHERE id=?", user.Username, user.UserId)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	rows, err := rs.RowsAfffected()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	return rows
+// )
