@@ -20,14 +20,14 @@ type UserpostClaims struct {
 }
 
 func ReleaseToken(user model.User) (string, error) {
-	expireTime := time.Now().Add(7 * 24 * time.Hour)
+	//expireTime := time.Now().Add(7 * 24 * time.Hour)
 	claims := &Claims{
 		UserId: user.Userid,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expireTime.Unix(), //过期时间
-			IssuedAt:  time.Now().Unix(),
-			Issuer:    "xietong.me",
-			Subject:   "user token",
+			//ExpiresAt: expireTime.Unix(), //过期时间
+			//IssuedAt:  time.Now().Unix(),
+			Issuer:  "xietong.me",
+			Subject: "user token",
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

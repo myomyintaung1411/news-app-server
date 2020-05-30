@@ -49,7 +49,7 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	r.DELETE("/api/reply/like/delete/:postid/:field", controller.DeleteReplyLikeRecord)
 	r.PUT("/api/reply/like/update", controller.UpdateReplyLike)
 	// 以下所有路由是自己新加上去的哟～
-	r.GET("/api/auth/user/info", middleware.AuthMiddleware(), controller.UserInfo)
+	r.GET("/api/auth/user/info", middleware.AuthMiddleware(), controller.UserProfileInfo)
 	r.POST("/api/auth/feedback", middleware.AuthUserFeedback(), controller.Feedback)
 	r.POST("/api/auth/user/update/name", middleware.AuthMiddleware(), controller.UpdateUserName)
 	r.POST("/api/auth/user/update/profileimage", middleware.AuthMiddleware(), controller.UpdateUserProfileImage)

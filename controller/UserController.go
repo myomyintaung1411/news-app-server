@@ -61,15 +61,15 @@ func Register(ctx *gin.Context) {
 	}
 	DB.Save(&newUser)
 	//发送token
-	token, err := common.ReleaseToken(newUser)
-	if err != nil {
-		response.Response(ctx, http.StatusInternalServerError, 500, nil, "系统异常")
-		log.Printf("token generate error:%v", err)
-		return
-	}
+	// token, err := common.ReleaseToken(newUser)
+	// if err != nil {
+	// 	response.Response(ctx, http.StatusInternalServerError, 500, nil, "系统异常")
+	// 	log.Printf("token generate error:%v", err)
+	// 	return
+	// }
 
-	//返回结果
-	response.Success(ctx, gin.H{"token": token}, "Success")
+	// //返回结果
+	// response.Success(ctx, gin.H{"token": token}, "Success")
 }
 
 func Login(c *gin.Context) {
@@ -157,13 +157,13 @@ func UserPost(c *gin.Context) {
 
 // 以下所有是自己新加上去的哟～
 
-// func UserInfo(c *gin.Context) {
+func UserProfileInfo(c *gin.Context) {
 
-// 	user, _ := c.Get("user")
+	user, _ := c.Get("user")
 
-// 	c.JSON(http.StatusOK, gin.H{"code": 200, "data": gin.H{"info": dto.ToUserInfoDto(user.(model.User))}})
+	c.JSON(http.StatusOK, gin.H{"code": 200, "data": gin.H{"info": dto.ToUserInfoDto(user.(model.User))}})
 
-// }
+}
 
 func UpdateUserName(c *gin.Context) {
 	DB := common.GetDB()
@@ -174,7 +174,7 @@ func UpdateUserName(c *gin.Context) {
 	uid := u.(model.User).Userid // 通过验证得来的user得到user的id
 	uname := c.PostForm("Username")
 
-	DB.Where("Userid = ?", uid).Find(&user)
+	DB.Where("userid = ?", uid).Find(&user)
 
 	user.Username = uname
 	DB.Save(&user)
@@ -198,7 +198,7 @@ func UpdateUserProfileImage(c *gin.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	filepath := "http://localhost:3000/public/" + filename
+	//filepath := "http://localhost:3000/public/" + filename
 
 	DB := common.GetDB()
 
@@ -208,9 +208,9 @@ func UpdateUserProfileImage(c *gin.Context) {
 	uid := u.(model.User).Userid // 通过验证得来的user得到user的id
 	//image := c.PostForm("Profileimage")
 
-	DB.Where("Userid = ?", uid).Find(&user)
+	DB.Where("userid = ?", uid).Find(&user)
 
-	user.Profilepic = filepath
+	user.Profilepic = filename
 	DB.Save(&user)
 
 	c.JSON(http.StatusOK, gin.H{"params": dto.ToUserInfoDto(user)})
@@ -226,7 +226,7 @@ func UpdateUserIntroduction(c *gin.Context) {
 	uid := u.(model.User).Userid // 通过验证得来的user得到user的id
 	intro := c.PostForm("Introduction")
 
-	DB.Where("Userid = ?", uid).Find(&user)
+	DB.Where("userid = ?", uid).Find(&user)
 
 	user.Introduction = intro
 	DB.Save(&user)
@@ -247,7 +247,7 @@ func UpdateUserGender(c *gin.Context) {
 
 	fmt.Println("sex is : ", sex)
 
-	DB.Where("Userid = ?", uid).Find(&user)
+	DB.Where("userid = ?", uid).Find(&user)
 
 	user.Sex = sex
 	DB.Save(&user)
@@ -265,7 +265,7 @@ func UpdateUserBirthday(c *gin.Context) {
 	uid := u.(model.User).Userid // 通过验证得来的user得到user的id
 	birth := c.PostForm("Birthday")
 
-	DB.Where("Userid = ?", uid).Find(&user)
+	DB.Where("userid = ?", uid).Find(&user)
 
 	user.Birthday = birth
 	DB.Save(&user)
