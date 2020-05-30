@@ -108,7 +108,7 @@ func UpdateMomentLike(ctx *gin.Context) {
 
 	id := ctx.PostForm("Momentpostid")
 	like := ctx.PostForm("Likecount")
-	i , err := strconv.Atoi(like)
+	i, err := strconv.Atoi(like)
 	if err != nil {
 		fmt.Print(err.Error)
 	}
@@ -119,4 +119,57 @@ func UpdateMomentLike(ctx *gin.Context) {
 	moment.Likecount = i
 
 	db.Save(&moment)
+}
+
+func CheckLike(ctx *gin.Context) {
+	db := common.GetDB()
+
+	userid, err := strconv.Atoi(ctx.PostForm("Userid"))
+	postid, err := strconv.Atoi(ctx.PostForm("Postid"))
+	s := ctx.PostForm("Field")
+	if err != nil {
+		fmt.Print(err.Error)
+	}
+	var like model.Likerecord
+
+	db.Where("userid = ? AND postid = ? AND field =?", userid, postid, s).Find(&like)
+
+	ctx.JSON(http.StatusOK, gin.H{"data": like})
+}
+
+func RecordLike(ctx *gin.Context) {
+	db := common.GetDB()
+
+	userid, err := strconv.Atoi(ctx.PostForm("Userid"))
+	postid, err := strconv.Atoi(ctx.PostForm("Postid"))
+	s := ctx.PostForm("Field")
+
+	if err != nil {
+		fmt.Print(err.Error)
+	}
+
+	newLike := model.Likerecord{
+		Userid: userid,
+		Postid: postid,
+		Field:  s,
+	}
+
+	db.Save(&newLike)
+
+	ctx.JSON(http.StatusOK, gin.H{"data": newLike})
+}
+
+func DeleteLike(ctx *gin.Context) {
+	db := common.GetDB()
+
+	userid := ctx.Param("userid")
+	postid := ctx.Param("postid")
+	field := ctx.Param("field")
+
+	fmt.Print(userid)
+
+	var like model.Likerecord
+	db.Where("userid =? AND postid =? AND field =?", userid, postid, field).Find(&like)
+	db.Delete(&like)
+
 }

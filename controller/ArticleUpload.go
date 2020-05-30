@@ -27,6 +27,7 @@ func NewArticlePost(ctx *gin.Context) {
 	categoryid := post.Categoryid
 	caption := post.Caption
 	content := post.Content
+	cover := post.Cover
 	view := post.Viewcount
 	like := post.Likecount
 	//date := post.Createdate
@@ -37,32 +38,22 @@ func NewArticlePost(ctx *gin.Context) {
 		Categoryid: categoryid,
 		Caption:    caption,
 		Content:    content,
+		Cover:      cover,
 		Viewcount:  view,
 		Likecount:  like,
 		Createdate: time.Now(),
 	}
 	DB.Save(&newArticlepost)
-	ctx.JSON(http.StatusOK, gin.H{"moment_post": &newArticlepost})
-	//json.NewEncoder(w).Encode(&newMomentpost)
-	//发送token
-	// token, err := common.ReleaseUserPostToken(newMo)
-	// if err != nil {
-	// 	response.Response(ctx, http.StatusInternalServerError, 500, nil, "Wrong token")
-	// 	log.Printf("token generate error:%v", err)
-	// 	return
-	// }
-
-	// //返回结果
-	// response.Success(ctx, gin.H{"token": token}, "Success")
+	ctx.JSON(http.StatusOK, gin.H{"article_post": &newArticlepost})
 }
 
 func AllArticlePost(ctx *gin.Context) {
 	db := common.GetDB()
 	//获取参数
-	userid := ctx.PostForm("Userid")
+	categoryid := ctx.PostForm("Categoryid")
 
 	var articles []model.Articlepost
-	db.Where("userid =?", userid).Find(&articles)
+	db.Where("categoryid = ?", categoryid).Find(&articles)
 
 	ctx.JSON(http.StatusOK, gin.H{"data": articles})
 }
@@ -78,9 +69,11 @@ func UpdateArticleLike(ctx *gin.Context) {
 	}
 
 	var article model.Articlepost
-	db.Where("momentpostid = ?", id).Find(&article)
+	db.Where("articlepostid = ?", id).Find(&article)
 
 	article.Likecount = i
 
 	db.Save(&article)
 }
+
+

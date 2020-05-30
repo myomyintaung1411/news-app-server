@@ -18,7 +18,7 @@ type User struct {
 	Sex          int
 	Email        string
 	Address      string
-	Birthday     time.Time
+	Birthday     string
 	Introduction string
 }
 
@@ -100,7 +100,10 @@ type Comment struct {
 	Commentid  uint `gorm:"primary_key"`
 	Userid     int
 	Postid     int
-	Text       int
+	Field      string
+	Username   string
+	Text       string
+	Likecount  int
 	Createdate time.Time
 }
 
@@ -120,4 +123,32 @@ type Follow struct {
 	Userid     int
 	Followerid int
 	Followdate time.Time
+}
+
+//likerecord table
+type Likerecord struct {
+	Id     uint `gorm:"primary_key"`
+	Userid int
+	Postid int
+	Field  string
+}
+
+//reply table
+type Reply struct {
+	Replyid    uint `gorm:"primary_key"`
+	Commentid  int
+	Userid     int
+	Username   string
+	Text       string
+	Likecount  int
+	Createdate time.Time
+}
+
+//feedback table
+type Feedback struct {
+	Fbid            uint `gorm:"primary_key"`
+	Userid          int
+	Fbcategory      string
+	Fbcontent       string
+	Fbscreencapture string
 }

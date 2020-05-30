@@ -44,3 +44,15 @@ func PostVideo(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, newVideo)
 
 }
+
+func GetAllVideo(ctx *gin.Context) {
+	// Categoryid := ctx.Query("Categoryid")
+	// println("leeeeeeeeeeeeeeeeeeeeeeee", Categoryid)
+	DB := common.GetDB()
+	id := ctx.PostForm("Categoryid")
+	var requestVideo []model.Videopost
+	DB.Where("categoryid =?", id).Find(&requestVideo)
+
+	ctx.JSON(http.StatusOK, gin.H{"data": requestVideo})
+
+}
