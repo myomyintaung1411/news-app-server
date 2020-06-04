@@ -6,10 +6,19 @@ import (
 )
 
 type UserDto struct {
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	Password string `json:"password"`
-	Phone    string `json:"phone"`
+	ID           int    `json:"Userid"`
+	Name         string `json:"Username"`
+	Phone        string `json:"Phone"`
+	Password     string `json:"Password"`
+	Createdate   string `json:"Createdate"`
+	Profilepic   string `json:"Profilepic"`
+	Imei         string `json:"Imei"`
+	Qq           string `json:"Qq"`
+	Sex          int    `json:"Sex"`
+	Email        string `json:"Email"`
+	Address      string `json:"Address"`
+	Birthday     string `json:"Birthday"`
+	Introduction string `json:"Introduction"`
 }
 
 type UserpostDto struct {
@@ -30,10 +39,19 @@ type UserInfoDto struct {
 
 func ToUserDto(user model.User) UserDto {
 	return UserDto{
-		ID:       user.Userid,
-		Name:     user.Username,
-		Password: user.Password,
-		Phone:    user.Phone,
+		ID:           user.Userid,
+		Name:         user.Username,
+		Phone:        user.Phone,
+		Password:     user.Password,
+		Createdate:   user.Createdate.String(),
+		Profilepic:   user.Profilepic,
+		Imei:         user.Imei,
+		Qq:           user.Qq,
+		Sex:          user.Sex,
+		Email:        user.Email,
+		Address:      user.Address,
+		Birthday:     user.Birthday,
+		Introduction: user.Introduction,
 	}
 }
 

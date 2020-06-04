@@ -69,7 +69,7 @@ func Register(ctx *gin.Context) {
 	// }
 
 	// //返回结果
-	// response.Success(ctx, gin.H{"token": token}, "Success")
+	response.Success(ctx, gin.H{"user": newUser}, "Success")
 }
 
 func Login(c *gin.Context) {
@@ -153,6 +153,89 @@ func UserPost(c *gin.Context) {
 	db.Model(&posts).Where("userid = ?", id).Count(&count)
 
 	c.JSON(http.StatusOK, gin.H{"count": count})
+}
+
+func AllUser(c *gin.Context) {
+	db := common.GetDB()
+
+	id := c.PostForm("Userid")
+
+	var users []model.User
+
+	db.Where("userid <> ?", id).Find(&users)
+
+	c.JSON(http.StatusOK, gin.H{"user": users})
+}
+
+func GetFollowerUser(id int) []int {
+
+	db := common.GetDB()
+
+	var Userid = id
+	var userid int
+
+	var result []int
+	//var follow model.Follow
+
+	//var result []string
+	//db.Table("follows").Where("followerid = ?", Userid).Select("userid")
+	rows, err := db.DB().Query("SELECT userid from follows WHERE followerid =?", Userid)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&userid)
+		if err != nil {
+			log.Fatal(err)
+		}
+		//log.Println(userid)
+		result = append(result, userid)
+	}
+	err = rows.Err()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	result = append(result, Userid)
+	return result
+
+	//return result
+	//print(result)
+	//c.JSON(http.StatusOK, gin.H{"user": follow})
+}
+
+func UnfollowUser(c *gin.Context) {
+
+	db := common.GetDB()
+
+	id, err := strconv.Atoi(c.PostForm("Userid"))
+	if err != nil {
+		fmt.Print(err.Error)
+	}
+
+	var a []int = GetFollowerUser(id)
+
+	var users []model.User
+
+	db.Not(a).Find(&users)
+
+	c.JSON(http.StatusOK, gin.H{"users": users})
+
+}
+
+func GetAllUser(c *gin.Context) {
+	db := common.GetDB()
+
+	id := c.PostForm("Userid")
+
+	var users []model.User
+
+	db.Table("users").Joins("LEFT JOIN follows ON users.userid <> follows.userid").Where("follows.followerid =?", id).Find(&users)
+
+	//db.Where("userid <> ?", id).Find(&users)
+
+	c.JSON(http.StatusOK, gin.H{"user": users})
 }
 
 // 以下所有是自己新加上去的哟～
